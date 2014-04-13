@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" debug="true">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<script src="http://code.jquery.com/jquery-1.6.4.js" type="text/javascript"></script>
+	<script src="http://tinysort.sjeiti.com/scripts/jquery.tinysort.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="css/leaderboard.css" media="screen" />
+	<title>Trainrush Leaderboard</title>
+</head>
+
+<body>
+	<ul id="leaderboard"></ul>
+	
+	<script type="text/javascript">
+	
+	poll();
+	
+	function poll() {
+
+		var o = [{"id": "1", "score": 500, "facebook_id": 1061840708, "username": "kalp"},
+				{"id": "2", "score": 300, "facebook_id": 1061840708, "username": "amy"},
+				{"id": "3", "score": 100, "facebook_id": 1061840708, "username": "dustin"}];
+		for(i=0;i<o.length;i++) {
+					if ($('#user-'+o[i].id).length == 0) {
+						// this id doesn't exist, so add it to our list.
+						$("#leaderboard").append('<li><h1 style="display:inline" id="user-' + o[i].id + '">' + o[i].score + '</h1> <img style="height:50px" src="http://graph.facebook.com/' + o[i].facebook_id + '/picture"/> ' + o[i].username + '</li>');
+					} else {
+						// this id does exist, so update 'score' count in the h1 tag in the list item.
+						$('#user-'+o[i].id).html(o[i].score);
+					}
+				}
+		sort();
+
+		/*$.ajax({
+			url: '/ajax/sort-leaderboard',	// needs to return a JSON array of items having the following properties: id, score, facebook_id, username 
+			dataType: 'json',
+			success: function(o) {
+				for(i=0;i<o.length;i++) {
+					if ($('#user-'+o[i].id).length == 0) {
+						// this id doesn't exist, so add it to our list.
+						$("#leaderboard").append('<li><h1 style="display:inline" id="user-' + o[i].id + '">' + o[i].score + '</h1> <img style="height:50px" src="http://graph.facebook.com/' + o[i].facebook_id + '/picture"/> ' + o[i].username + '</li>');
+					} else {
+						// this id does exist, so update 'score' count in the h1 tag in the list item.
+						$('#user-'+o[i].id).html(o[i].score);
+					}
+				}
+				sort();
+			},
+		});*/
+	
+		// play it again, sam
+		var t=setTimeout("poll()",3000);
+
+	}
+	
+	function sort() {
+		var $Ul = $('ul#leaderboard');
+		$Ul.css({position:'relative',height:$Ul.height(),display:'block'});
+		var iLnH;
+		var $Li = $('ul#leaderboard>li');
+		$Li.each(function(i,el){
+			var iY = $(el).position().top;
+			$.data(el,'h',iY);
+			if (i===1) iLnH = iY;
+		});
+		$Li.tsort('h1:eq(0)',{order:'desc'}).each(function(i,el){
+			var $El = $(el);
+			var iFr = $.data(el,'h');
+			var iTo = i*iLnH;
+			$El.css({position:'absolute',top:iFr}).animate({top:iTo},500);
+		});
+	}
+	</script>
+</body>
+</html>
